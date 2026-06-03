@@ -1,0 +1,443 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "datasource": "PBFA97CFB590B2093",
+      "description": "Availability: % of requests returning non-5xx over 30d.\nLatency: % of requests completing within 1s over 30d (WebSocket connections excluded).",
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "decimals": 2,
+          "mappings": [],
+          "max": 100,
+          "min": 80,
+          "noValue": "No data",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "red", "value": null},
+              {"color": "#FF9830", "value": 85},
+              {"color": "green", "value": 95}
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+      "id": 1,
+      "options": {
+        "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false},
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "targets": [
+        {
+          "datasource": "PBFA97CFB590B2093",
+          "expr": "(1 - ((sum(rate(nginx_ingress_controller_requests_total{namespace=\"$namespace\",status=~\"5..\"}[30d])) or vector(0)) / clamp_min(sum(rate(nginx_ingress_controller_requests_total{namespace=\"$namespace\"}[30d])), 0.000000001))) * 100",
+          "legendFormat": "Availability",
+          "refId": "A"
+        },
+        {
+          "datasource": "PBFA97CFB590B2093",
+          "expr": "(1 - ((sum(rate(nginx_ingress_controller_request_duration_seconds_count{namespace=\"$namespace\",status!=\"101\"}[30d])) - sum(rate(nginx_ingress_controller_request_duration_seconds_bucket{namespace=\"$namespace\",status!=\"101\",le=\"1\"}[30d]))) / clamp_min(sum(rate(nginx_ingress_controller_request_duration_seconds_count{namespace=\"$namespace\",status!=\"101\"}[30d])), 0.000000001))) * 100",
+          "legendFormat": "Latency",
+          "refId": "B"
+        }
+      ],
+      "title": "Ingress",
+      "type": "gauge"
+    },
+    {
+      "datasource": "PBFA97CFB590B2093",
+      "description": "% of peer-to-peer document replication transactions applied to local cache within 5.12s over 30d.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "decimals": 2,
+          "mappings": [],
+          "max": 100,
+          "min": 80,
+          "noValue": "No data",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "red", "value": null},
+              {"color": "#FF9830", "value": 85},
+              {"color": "green", "value": 95}
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+      "id": 3,
+      "options": {
+        "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false},
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "targets": [
+        {
+          "datasource": "PBFA97CFB590B2093",
+          "expr": "(1 - ((sum(rate(hydra_subscription_txn_log_to_cache_latency_count{namespace=\"$namespace\"}[30d])) - sum(rate(hydra_subscription_txn_log_to_cache_latency_bucket{namespace=\"$namespace\",le=\"5.12\"}[30d]))) / clamp_min(sum(rate(hydra_subscription_txn_log_to_cache_latency_count{namespace=\"$namespace\"}[30d])), 0.000000001))) * 100",
+          "legendFormat": "P2P Replication",
+          "refId": "A"
+        }
+      ],
+      "title": "Peer to Peer Document Replication",
+      "type": "gauge"
+    },
+    {
+      "datasource": "PBFA97CFB590B2093",
+      "description": "Availability: % of store API requests returning non-4xx/5xx over 30d.\nLatency: % of store API requests completing within 1s over 30d.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "decimals": 2,
+          "mappings": [],
+          "max": 100,
+          "min": 80,
+          "noValue": "No data",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "red", "value": null},
+              {"color": "#FF9830", "value": 85},
+              {"color": "green", "value": 95}
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+      "id": 2,
+      "options": {
+        "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false},
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "targets": [
+        {
+          "datasource": "PBFA97CFB590B2093",
+          "expr": "(1 - ((sum(rate(hydra_subscription_actix_http_requests_duration_secs_count{namespace=\"$namespace\",exported_endpoint=~\".*store.*\",status_code=~\"[45]xx\"}[30d])) or vector(0)) / clamp_min(sum(rate(hydra_subscription_actix_http_requests_duration_secs_count{namespace=\"$namespace\",exported_endpoint=~\".*store.*\",status_code=~\"[2-5]xx\"}[30d])), 0.000000001))) * 100",
+          "legendFormat": "Availability",
+          "refId": "A"
+        },
+        {
+          "datasource": "PBFA97CFB590B2093",
+          "expr": "(1 - ((sum(rate(hydra_subscription_actix_http_requests_duration_secs_count{namespace=\"$namespace\",exported_endpoint=~\".*store.*\"}[30d])) - sum(rate(hydra_subscription_actix_http_requests_duration_secs_bucket{namespace=\"$namespace\",exported_endpoint=~\".*store.*\",le=\"1.28\"}[30d]))) / clamp_min(sum(rate(hydra_subscription_actix_http_requests_duration_secs_count{namespace=\"$namespace\",exported_endpoint=~\".*store.*\"}[30d])), 0.000000001))) * 100",
+          "legendFormat": "Latency",
+          "refId": "B"
+        }
+      ],
+      "title": "HTTP API",
+      "type": "gauge"
+    },
+    {
+      "datasource": "PBFA97CFB590B2093",
+      "description": "Health score derived from Kafka transaction.log consumer lag on the store-replica. Score = 100 - (lag / 500), clamped to [0, 100]. Green: lag < 5 000 msgs, Amber: lag < 15 000 msgs.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "decimals": 2,
+          "mappings": [],
+          "max": 100,
+          "min": 80,
+          "noValue": "No data",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "red", "value": null},
+              {"color": "#FF9830", "value": 85},
+              {"color": "green", "value": 95}
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+      "id": 5,
+      "options": {
+        "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false},
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "targets": [
+        {
+          "datasource": "PBFA97CFB590B2093",
+          "expr": "clamp_min(clamp_max(100 - (max(hydra_kafka_consumer_lag{topic=\"transaction.log\",k8s_container_name=\"store-replica\",namespace=\"$namespace\"}) / 500), 0), 100)",
+          "legendFormat": "Latency",
+          "refId": "A"
+        }
+      ],
+      "title": "CDC Write Latency",
+      "type": "gauge"
+    },
+    {
+      "datasource": "PBFA97CFB590B2093",
+      "description": "MDB → BigPeer: % of MongoDB change-stream writes applied to BigPeer within 1s over 30d.\nBigPeer → MDB: % of BigPeer writes persisted to MongoDB within 1s over 30d.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "decimals": 2,
+          "mappings": [],
+          "max": 100,
+          "min": 80,
+          "noValue": "No data",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "red", "value": null},
+              {"color": "#FF9830", "value": 85},
+              {"color": "green", "value": 95}
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16},
+      "id": 4,
+      "options": {
+        "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false},
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "targets": [
+        {
+          "datasource": "PBFA97CFB590B2093",
+          "expr": "(1 - ((sum(rate(hydra_mongo_connector_mdb_to_ditto_latency_count{namespace=\"$namespace\"}[30d])) - sum(rate(hydra_mongo_connector_mdb_to_ditto_latency_bucket{namespace=\"$namespace\",le=\"1.024\"}[30d]))) / clamp_min(sum(rate(hydra_mongo_connector_mdb_to_ditto_latency_count{namespace=\"$namespace\"}[30d])), 0.000000001))) * 100",
+          "legendFormat": "MDB → BigPeer",
+          "refId": "A"
+        },
+        {
+          "datasource": "PBFA97CFB590B2093",
+          "expr": "(1 - ((sum(rate(hydra_mongo_connector_ditto_to_mdb_latency_count{namespace=\"$namespace\"}[30d])) - sum(rate(hydra_mongo_connector_ditto_to_mdb_latency_bucket{namespace=\"$namespace\",le=\"1.024\"}[30d]))) / clamp_min(sum(rate(hydra_mongo_connector_ditto_to_mdb_latency_count{namespace=\"$namespace\"}[30d])), 0.000000001))) * 100",
+          "legendFormat": "BigPeer → MDB",
+          "refId": "B"
+        }
+      ],
+      "title": "MongoDB Connector",
+      "type": "gauge"
+    },
+    {
+      "datasource": "PBFA97CFB590B2093",
+      "description": "Freshness is a measure of the latency between an event being generated and it becoming available for consumption.\n\nFreshness score per Kafka consumer: 100 - (lag / 500), clamped to [0, 100]. Green: lag < 2 500 msgs, Amber: lag < 7 500 msgs. Store Replica and CDC Transformer consume transaction.log; MongoDB Connector consumes the CDC output topic (ditto namespace only).",
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "decimals": 2,
+          "mappings": [],
+          "max": 100,
+          "min": 80,
+          "noValue": "No data",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "red", "value": null},
+              {"color": "#FF9830", "value": 85},
+              {"color": "green", "value": 95}
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16},
+      "id": 8,
+      "options": {
+        "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false},
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "targets": [
+        {
+          "datasource": "PBFA97CFB590B2093",
+          "expr": "clamp_min(clamp_max(100 - (max(hydra_kafka_consumer_lag{topic=\"transaction.log\",k8s_container_name=\"store-replica\",namespace=\"$namespace\"}) / 500), 0), 100)",
+          "legendFormat": "Store Replica",
+          "refId": "A"
+        },
+        {
+          "datasource": "PBFA97CFB590B2093",
+          "expr": "clamp_min(clamp_max(100 - (max(kafka_consumergroup_lag{group=~\"CDC_TRANSFORMER.*\"}) / 500), 0), 100)",
+          "legendFormat": "CDC Transformer",
+          "refId": "B"
+        },
+        {
+          "datasource": "PBFA97CFB590B2093",
+          "expr": "clamp_min(clamp_max(100 - (max(kafka_consumergroup_lag{group=~\"mongo-connector.*\"}) / 500), 0), 100)",
+          "legendFormat": "MongoDB Connector",
+          "refId": "C"
+        }
+      ],
+      "title": "Kafka Consumer Freshness",
+      "type": "gauge"
+    },
+    {
+      "datasource": "PBFA97CFB590B2093",
+      "description": "Availability: % of store API requests (v1/v2 endpoints) returning non-4xx/5xx over 30d.\nLatency: % of those requests completing within 500ms over 30d.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "decimals": 2,
+          "mappings": [],
+          "max": 100,
+          "min": 80,
+          "noValue": "No data",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "red", "value": null},
+              {"color": "#FF9830", "value": 85},
+              {"color": "green", "value": 95}
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 24},
+      "id": 7,
+      "options": {
+        "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false},
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "targets": [
+        {
+          "datasource": "PBFA97CFB590B2093",
+          "expr": "(1 - ((sum(rate(hydra_store_actix_http_requests_duration_secs_count{namespace=\"$namespace\",exported_endpoint!~\"/health.*|/metrics|/cluster_version\",status_code=~\"[45]xx\"}[30d])) or vector(0)) / clamp_min(sum(rate(hydra_store_actix_http_requests_duration_secs_count{namespace=\"$namespace\",exported_endpoint!~\"/health.*|/metrics|/cluster_version\",status_code=~\"[2-5]xx\"}[30d])), 0.000000001))) * 100",
+          "legendFormat": "Availability",
+          "refId": "A"
+        },
+        {
+          "datasource": "PBFA97CFB590B2093",
+          "expr": "(1 - ((sum(rate(hydra_store_actix_http_requests_duration_secs_count{namespace=\"$namespace\",exported_endpoint!~\"/health.*|/metrics|/cluster_version\"}[30d])) - sum(rate(hydra_store_actix_http_requests_duration_secs_bucket{namespace=\"$namespace\",exported_endpoint!~\"/health.*|/metrics|/cluster_version\",le=\"0.64\"}[30d]))) / clamp_min(sum(rate(hydra_store_actix_http_requests_duration_secs_count{namespace=\"$namespace\",exported_endpoint!~\"/health.*|/metrics|/cluster_version\"}[30d])), 0.000000001))) * 100",
+          "legendFormat": "Latency",
+          "refId": "B"
+        }
+      ],
+      "title": "Store",
+      "type": "gauge"
+    },
+    {
+      "datasource": "PBFA97CFB590B2093",
+      "description": "Health of the BigPeer-to-BigPeer replication link over the last 30 days.\n\nConnection: Whether a replication session is currently active between the two BigPeers.\nLatency: % of data sync cycles completing within 30 seconds.\nIntegration: % of updates received from the remote peer that were applied without error.\nSession Health: % of replication messages exchanged without a connection-breaking error.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "decimals": 2,
+          "mappings": [],
+          "max": 100,
+          "min": 80,
+          "noValue": "No data",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "red", "value": null},
+              {"color": "#FF9830", "value": 85},
+              {"color": "green", "value": 95}
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": [
+          {
+            "matcher": {"id": "byName", "options": "Connection"},
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "0":   {"text": "Disconnected", "color": "red",   "index": 0},
+                      "100": {"text": "Connected",    "color": "green", "index": 1}
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 32},
+      "id": 6,
+      "options": {
+        "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false},
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "targets": [
+        {
+          "datasource": "PBFA97CFB590B2093",
+          "expr": "clamp_max(max(hydra_subscription_connected_clients{namespace=\"$namespace\",k8s_container_name=\"replication-server\"}) * 100, 100)",
+          "legendFormat": "Connection",
+          "refId": "A"
+        },
+        {
+          "datasource": "PBFA97CFB590B2093",
+          "expr": "(1 - ((sum(rate(ditto_replication_outgoing_cycle_duration_count{namespace=\"$namespace\"}[30d])) - sum(rate(ditto_replication_outgoing_cycle_duration_bucket{namespace=\"$namespace\",le=\"32.768\"}[30d]))) / clamp_min(sum(rate(ditto_replication_outgoing_cycle_duration_count{namespace=\"$namespace\"}[30d])), 0.000000001))) * 100",
+          "legendFormat": "Latency",
+          "refId": "B"
+        },
+        {
+          "datasource": "PBFA97CFB590B2093",
+          "expr": "(1 - ((sum(rate(ditto_replication_update_integration_outcomes_total{namespace=\"$namespace\",outcome=~\"error.*\"}[30d])) or vector(0)) / clamp_min(sum(rate(ditto_replication_update_integration_outcomes_total{namespace=\"$namespace\",outcome=~\".+\"}[30d])), 0.000000001))) * 100",
+          "legendFormat": "Integration",
+          "refId": "C"
+        },
+        {
+          "datasource": "PBFA97CFB590B2093",
+          "expr": "(1 - (((sum(rate(ditto_replication_session_errors_recv_total{namespace=\"$namespace\"}[30d])) or vector(0)) + (sum(rate(ditto_replication_session_errors_send_total{namespace=\"$namespace\"}[30d])) or vector(0))) / clamp_min(sum(rate(ditto_replication_messages_received_total{namespace=\"$namespace\"}[30d])) + sum(rate(ditto_replication_messages_sent_total{namespace=\"$namespace\"}[30d])), 0.000000001))) * 100",
+          "legendFormat": "Session Health",
+          "refId": "D"
+        }
+      ],
+      "title": "BigPeer to BigPeer Replication",
+      "type": "gauge"
+    }
+  ],
+  "refresh": "5m",
+  "schemaVersion": 37,
+  "tags": ["bigpeer", "health", "slo"],
+  "templating": {
+    "list": [
+      {
+        "current": {},
+        "datasource": "PBFA97CFB590B2093",
+        "definition": "label_values(hydra_subscription_actix_http_requests_duration_secs_count, namespace)",
+        "hide": 0,
+        "includeAll": false,
+        "label": "BigPeer Namespace",
+        "multi": false,
+        "name": "namespace",
+        "options": [],
+        "query": {
+          "qryType": 1,
+          "query": "label_values(hydra_subscription_actix_http_requests_duration_secs_count, namespace)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "sort": 1,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {"from": "now-30d", "to": "now"},
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "BigPeer Health",
+  "uid": "bigpeer-health",
+  "version": 19
+}
