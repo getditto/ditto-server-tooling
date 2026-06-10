@@ -285,6 +285,61 @@
     },
     {
       "datasource": "PBFA97CFB590B2093",
+      "description": "MDB → BigPeer: max(mdb_latest_cluster_time) − max(mdb_processed_cluster_time). How far the connector's processed position trails MongoDB's latest cluster time.\n\nBigPeer → MDB: max(hydra_cdc_producer_last_ingest_time_secs) − max(ditto_to_mdb_last_written_ingest_time_secs). The connector's contribution to Ditto→Mongo lag.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "decimals": 1,
+          "mappings": [],
+          "min": 0,
+          "noValue": "No data",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "#FF9830", "value": 30},
+              {"color": "red", "value": 120}
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 24},
+      "id": 9,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false},
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
+      },
+      "pluginVersion": "11.1.0",
+      "targets": [
+        {
+          "datasource": "PBFA97CFB590B2093",
+          "editorMode": "code",
+          "expr": "max(max(hydra_mongo_connector_mdb_latest_cluster_time{namespace=\"$namespace\"}) by (collection) - max(hydra_mongo_connector_mdb_processed_cluster_time{namespace=\"$namespace\"}) by (collection))",
+          "legendFormat": "MDB → BigPeer",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": "PBFA97CFB590B2093",
+          "editorMode": "code",
+          "expr": "max(hydra_cdc_producer_last_ingest_time_secs{namespace=\"$namespace\"}) - max(hydra_mongo_connector_ditto_to_mdb_last_written_ingest_time_secs{namespace=\"$namespace\"})",
+          "legendFormat": "BigPeer → MDB",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "MongoDB Connector Lag",
+      "type": "gauge"
+    },
+    {
+      "datasource": "PBFA97CFB590B2093",
       "description": "Availability: % of store API requests (v1/v2 endpoints) returning non-4xx/5xx over 30d.\nLatency: % of those requests completing within 500ms over 30d.",
       "fieldConfig": {
         "defaults": {
@@ -306,7 +361,7 @@
         },
         "overrides": []
       },
-      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 24},
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 24},
       "id": 7,
       "options": {
         "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false},
@@ -439,5 +494,5 @@
   "timezone": "browser",
   "title": "BigPeer Health",
   "uid": "bigpeer-health",
-  "version": 19
+  "version": 20
 }
